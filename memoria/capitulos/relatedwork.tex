@@ -1,0 +1,57 @@
+\chapter{Related Work}
+\label{cap:relatedwork}
+
+This chapter reviews the previous work on which the study rests. First, research on PPM is reviewed in general terms, from model-based approaches to ML-based ones, together with its application to healthcare processes. Then the work of Zare et al.\ \cite{zare2025}, whose experimental framework this work adopts, is presented in greater detail and that choice is justified.
+
+\section{Approaches to Predictive Process Monitoring}
+
+PPM has become a research area in its own right within PM, aimed at predicting the future behavior of a process from historical event logs and partially executed instances. Early approaches relied on explicit representations of the process. Van der Aalst et al.\ \cite{aalst2011} annotate a transition system derived from the event log with time statistics to predict the remaining time; de Leoni et al.\ \cite{deleoni2016} propose a general framework for correlating, predicting and clustering dynamic behavior from event logs; and Conforti et al.\ \cite{conforti2015} predict risks across multiple process instances. These model-based approaches have the advantage of interpretability, but their predictive capacity depends on the process model capturing the relevant dependencies, which is difficult in highly variable processes.
+
+Subsequent research has shifted toward ML-based approaches. Di Francescomarino et al.\ \cite{difrancescomarino2018} analyze which PPM method suits each situation, and M\'arquez-Chamorro et al.\ \cite{marquez2018} offer a systematic review of predictive monitoring approaches for business processes. These contributions establish the methodological foundations of the field, but their conclusions also motivate additional empirical evaluation when the techniques are transferred to domains characterized by highly variable and complex executions.
+
+The diversity of prediction types introduces additional methodological considerations. Teinemaa et al.\ \cite{teinemaa2019} systematically investigate outcome prediction and propose the evaluation protocol that has become the reference: temporal split, prefixes of increasing length and AUC-ROC per prefix length. Tax et al.\ \cite{tax2017} introduce LSTM networks to predict the next activity and the remaining time, and Rama-Maneiro et al.\ \cite{ramamaneiro2021} review and compare DL approaches for PPM on a broad set of public event logs, concluding that no architecture dominates on all of them. Di Francescomarino and Ghidini \cite{difrancescomarino2022} offer a broader perspective of PPM covering the different prediction types, including the process outcome, the remaining time and future activities. Although these contributions provide valuable methodological guidance, prediction on healthcare processes poses specific challenges. In particular, patient trajectories may follow alternative paths, repeat clinical activities, show highly variable time intervals and depend on decisions influenced by the individual characteristics of the patient.
+
+Beyond predictive performance, the interpretability of the models is another relevant research challenge. Mehdiyev et al.\ \cite{mehdiyev2023} review interpretable and Explainable Artificial Intelligence (XAI) methods for PPM and highlight the importance of understanding the factors that underlie each prediction. This question is especially important in healthcare applications, where the usefulness of a predictive model depends not only on its accuracy but also on the extent to which its outputs can be understood and assessed by clinicians.
+
+Recent work has also extended PPM toward non-stationary and more complex scenarios. Pasquadibisceglie et al.\ \cite{pasquadibisceglie2026} revisit PPM through the lens of deep online learning, where the predictive model is updated continuously as new events arrive, in order to cope with concept drift in the process; and Munoz-Gama et al.\ \cite{munoz2022} characterize the specific challenges of PM in healthcare, where such drift and variability are the norm. However, predicting clinical outcomes and predicting the next activity of a patient's trajectory are distinct research objectives, and further research is needed on the extent to which PPM techniques adequately model the sequential behavior of adult inpatient processes.
+
+\section{The Entropy-Driven Next Activity Prediction Approach}
+\label{sec:zare}
+
+A particularly relevant contribution for this work is the Entropy-Driven Next Activity Prediction Approach of Zare et al.\ \cite{zare2025}, who address the question of which model should be used to predict the next activity in a given event log and propose answering it before training anything by means of the \textbf{process entropy}. The probability of each direct transition between activities, $p(a \rightarrow b)$, is computed as its relative frequency in the event log, and the Shannon entropy of that distribution:
+\begin{equation}
+  H = -\sum_{t} p(t)\,\log_2 p(t),
+\end{equation}
+where $t$ ranges over the observed transitions. A highly deterministic process, with few very frequent transitions, has low entropy; a process with many equiprobable branches has high entropy. The authors classify event logs into low entropy ($H < 3$ bits), medium ($3 \le H \le 5$) and high ($H > 5$).
+
+On six public event logs (Table~\ref{tab:zare_entropias}), three of them from the Business Process Intelligence Challenge (BPIC), they compare DTs, RF and XGBoost with Convolutional Neural Network (CNN)-LSTM and CNN-Bidirectional LSTM (BiLSTM) networks and a Transformer of their own, the DAW-Transformer, which attends to all the attributes of the event log with a dynamic window. Their conclusion is that \textbf{on low- and medium-entropy event logs interpretable models match deep ones}, which are only advantageous on high-entropy event logs such as Sepsis (5.07 bits). The study explicitly considers process complexity as a factor influencing the selection of the predictive model, and its evaluation includes event logs with different entropy levels, one of them from healthcare.
+
+\begin{table}[htbp]
+\centering
+\caption[Event logs evaluated by Zare et al.\ and their process entropy.]{Event logs evaluated by Zare et al.\ and their process entropy \cite{zare2025}.}
+\label{tab:zare_entropias}
+\begin{tabular}{lrrrr}
+\toprule
+Event log & Cases & Events & Activities & Entropy (bits) \\
+\midrule
+Helpdesk & 3,804 & 13,710 & 9 & 2.60 \\
+Road Traffic Fine Management & 150,370 & 561,470 & 11 & 2.96 \\
+BPIC 2020 Request for Payment & 6,886 & 36,795 & 18 & 3.21 \\
+BPIC 2017 & 31,509 & 193,849 & 8 & 3.24 \\
+BPIC 2020 Prepaid Travel Cost & 2,092 & 18,017 & 18 & 3.64 \\
+Sepsis & 781 & 9,165 & 15 & 5.07 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Positioning of this Work}
+
+Adult inpatient care provides a relevant scenario in which to test the Entropy-Driven Next Activity Prediction Approach \cite{zare2025}. Hospitalization processes follow different paths depending on the admission type and the treatment, and the event logs reconstructed from hospital information systems contain repeated activities, simultaneous timestamps and substantial differences in case length and activity frequency. These characteristics may influence both the estimation of the process entropy and the performance of the predictive models.
+
+Based on these considerations, this work proposes an empirical evaluation of the algorithms studied by Zare et al.\ \cite{zare2025} on a real adult inpatient event log, narrowed to the elective surgical admission process. With respect to the paper, two extensions are introduced. The first is that, alongside next-activity prediction, two outcome-based predictions are evaluated: ICU admission and prolonged length of stay. They are the ones that answer the clinical question of the project, and they are evaluated with the protocol of Teinemaa et al. The second is that a detailed analysis is made of which information in the event log is legitimate at each prediction point, a question that is rarely raised on public event logs and that is decisive on a clinical event log.
+
+The literature analysis also motivated a scope decision. The proposal of this work considered comparing model-based approaches with ML-based ones. Recent literature, and in particular the benchmarks of Teinemaa et al.\ and Rama-Maneiro et al., shows that ML-based approaches dominate in predictive capacity. The Entropy-Driven Next Activity Prediction Approach \cite{zare2025} already includes an interpretable model (the DT) as reference. For these two reasons, it was decided to focus the comparison on the five algorithms of the paper and to leave model-based approaches as future work.
+
+A second scope decision concerns the Transformer. The Entropy-Driven Next Activity Prediction Approach \cite{zare2025} uses the DAW-Transformer, a model of dimension 256 that attends to every attribute of the event log with a dynamic window, and whose advantage appears on the high-entropy event logs of the paper, such as Sepsis (5.07 bits). The event log of this work is in the medium band (3.39 bits, Section~\ref{sec:entropia}), has few attributes per event (the activity and two temporal features, with the case attributes kept apart), prefixes of at most six events and between four and six thousand prefixes. In that setting the attribute-wise attention of the DAW-Transformer has little to attend to and its size would add parameters without data to fit them. For this reason a standard Transformer encoder of reduced size ($d = 32$) was used, which keeps the comparison between the Transformer family and the other four algorithms while matching the size of the event log; Section~\ref{sec:encoding} details its configuration.
+
+The expected contribution is not a new predictive architecture, but a systematic evaluation of the generalization, robustness and practical applicability of existing PPM approaches in a real healthcare setting, providing evidence on the relationship between process entropy, model choice and predictive performance in adult hospitalization.

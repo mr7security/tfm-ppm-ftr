@@ -1,0 +1,49 @@
+\chapter{Conclusions}
+\label{cap:conclusiones}
+
+This chapter presents the conclusions drawn during the work and after its completion: the personal ones, those derived from the study in relation to the objectives set, and the limitations and lines of future work.
+
+\section{Personal Conclusions}
+
+[Personal paragraph: what the work has meant in relation to the master's degree, what has been learned about PM and PPM, about working with real clinical data and about the importance of defining the scope and documenting each phase. Written in the first person, as in the model report.]
+
+\section{Conclusions Derived From the Study}
+
+The development of the work has made it possible to fulfill the objectives set in the proposal, with the scope narrowed to the elective surgical admission process. The methodology followed (iterative construction of the event log, validation with several PM tools, incremental experimental design and evaluation with a strict protocol) has produced consistent and reproducible results. In relation to the objectives of Section~\ref{sec:objetivos}, numbered as there, the following conclusions stand out:
+
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Objective 1. Transformation of the database into an event log.} An event log of 1,475 episodes, 7,780 events and 14 activities was built from four event tables of \code{ftr\_cige\_v01}, with a design decision that proved decisive: separating the planned postoperative destination (a decision recorded in the operating theater) from the actual transfer (a movement with its own time). The four PM tools read the event log identically.
+  \item \textbf{Objective 2. Analysis of the event log through discovery and conformance.} The Heuristics Miner is the best discovered model (fitness 0.97--0.98 in ProM and PM4Py, and precision 0.92 in PM4Py). The reference BPMN model, with the ICU bed reservation read as the postoperative destination, explains 81\% of the traces in two independent implementations (Celonis and PM4Py) and flags the unplanned ICU admission as a deviation from the planned destination. The central finding is that \textbf{the postoperative destination is planning, not prediction}: \code{DESTINO\_UCI} implies \code{INGRESO\_UCI} in all 110 cases.
+  \item \textbf{Objectives 3 and 4. State-of-the-art study and algorithm selection.} The Entropy-Driven Next Activity Prediction Approach \cite{zare2025} (five algorithms, process entropy as framework) and the evaluation protocol of Teinemaa et al.\ for the outcome-based predictions were adopted. The entropy of the event log, 3.39 bits, places it in the medium band of the paper, for which the paper predicts that interpretable models perform close to deep ones.
+  \item \textbf{Objectives 5 and 7. Implementation and evaluation of the algorithms.} The three predictions run in a single reproducible run of 551 s on CPU. The next activity is predicted with an accuracy of 0.91, 4.6 points above the baseline; ICU admission without planning information is anticipated with an AUC-ROC of 0.89 (0.84 already at admission, 0.92 after the operating theater); and prolonged length of stay with 0.90 and an AUC-PR of 0.55. Unplanned ICU admission, the most clinically relevant target, shows signal (RF 0.87 at the exit of the operating theater) but with 21 cases it allows only an exploratory analysis.
+  \item \textbf{Objectives 6 and 8. Comparison of the predictive approaches.} The sequence models (LSTM and Transformer) win in ranking when there is enough signal, but by only 0.5 to 1 point of AUC-ROC over RF, which is the most robust model, the best calibrated in all the targets and the one that wins when the signal is scarce. Transformer does not outperform LSTM with traces of one to six events. The predictive signal lies in the patient and surgery attributes rather than in the sequence of events. This conclusion agrees with that of the Entropy-Driven Next Activity Prediction Approach \cite{zare2025} for medium-entropy event logs and is reproduced here with a clinical event log built for this work and on three predictions.
+\end{itemize}
+
+Another conclusion of the work is methodological: a substantial part of the effort did not consist in training models, but in identifying which information is legitimate at each prediction point. Variant B (AUC-ROC 0.999 once the destination is in the prefix) and the sensitivity to the number of diagnoses (which doubles the apparent performance on the scarcest target) show that, in real clinical data, an excellent result is frequently a symptom of leakage and not of predictive ability. Conformance analysis and the study of the attributes by phase were the tools that made it possible to detect it.
+
+\section{Limitations and Future Work}
+
+The work has limitations that must be taken into account:
+
+\begin{itemize}[leftmargin=*]
+  \item The event log has 1,475 episodes and the test set 295; the variability of the metrics across seeds is high and the targets with fewer than 30 positives cannot be evaluated with a temporal split.
+  \item The five algorithms were run with basic configuration, without hyperparameter tuning; XGBoost and the deep models would probably improve with it.
+  \item The deep models are much smaller than those of Zare et al.\ \cite{zare2025} ($d = 32$ versus 256), in accordance with the size of the event log, but it has not been checked whether a larger model would change the conclusion.
+  \item The ICD chapter of the main diagnosis comes from the coding at discharge and is kept with reservations; the alternative would be to code the admission diagnosis, which is free text.
+  \item The split is by case and not by patient (1,308 patients for 1,475 episodes), and therefore a patient may appear in both training and test.
+  \item In prolonged length of stay, elapsed time dominates the prediction; evaluation at a fixed point of the process, such as the exit of the operating theater, could be considered.
+  \item The data come from a single hospital and a single period, which limits generalization.
+\end{itemize}
+
+From these limitations, the following lines of future work are proposed, in order of priority:
+
+\begin{itemize}[leftmargin=*]
+  \item Hyperparameter tuning with temporal cross-validation in Predictions~2 and 3, and calibration of the deep models.
+  \item Explainability of RF and XGBoost through SHAP values, to contrast with clinical judgment which variables support each prediction.
+  \item Definition of an `unplanned complication' that excludes the planned ICU admissions (135 positives), as an intermediate target between unplanned ICU admission (21) and the broad complication (240).
+  \item Extension of the population to all surgical admissions, not only elective ones, to provide more cases for the unplanned ICU admission target; this requires reopening the agreed scope.
+  \item Testing of the process-model-based approaches (annotated transition systems), considered in the proposal and not addressed, to complete the comparison between the two PPM families.
+  \item Development of a decision-support tool based on the Prediction~2 model, which presents the risk of ICU admission at admission and after the operating theater.
+\end{itemize}
+
+In short, the work constitutes a first step in the application of PPM to a real surgical process in an FTR context, and establishes an event log, a validated reference model and a reproducible experimental pipeline on which further research can be built.

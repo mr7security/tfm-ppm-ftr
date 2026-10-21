@@ -1,0 +1,156 @@
+\chapter{Introduction}
+\label{cap:introduccion}
+
+This chapter introduces the work carried out. It explains the healthcare and technological context in which the research is framed and the motivation behind it, presents the objectives set out in the proposal and the scope that was defined, describes the technological framework employed, the methodology and the follow-up of the project, and ends with the structure of this report.
+
+\section{Context and Motivation}
+\label{sec:contexto}
+
+During the care of an inpatient, data of very different nature are continuously recorded. Each admission generates an administrative record of entry and discharge and, throughout the stay, surgical interventions, inter-service consultations, transfers between units, nursing assessments, vital signs and laboratory results, among other data. Taken together, these data describe the \emph{care process} that each patient follows from admission to discharge. Although they are recorded for care and management purposes, they can be transformed into an \emph{event log}. That event log can then be analyzed with Process Mining (PM) techniques in order to understand how care flows actually unfold and to improve patient safety \cite{aalst2016}.
+
+One of the challenges of the inpatient care process is the early identification of the adverse situations that lead to what the medical literature calls Failure To Rescue (FTR). FTR is the inability to prevent the deterioration of a patient once a complication has appeared \cite{silber1992}. It is a phenomenon that is still poorly characterized in the medical literature, particularly regarding the data that precede it in hospital information systems. It is therefore of interest to analyze the situations that may lead to an FTR from the data that the hospital already records, with the aim of anticipating them. These situations are the unplanned admission to the intensive care unit (ICU), the prolonged length of stay and the onset of postoperative complications. That is the clinical motivation of this work.
+
+From a technical point of view, PM \cite{aalst2016} provides the appropriate framework to address the problem. It makes it possible to build an event log from hospital data, to discover the process that patients follow and to compare it with the expected process. Its predictive branch, Predictive Process Monitoring (PPM) \cite{difrancescomarino2022,teinemaa2019}, builds models capable of anticipating how a case that is still running will continue. PPM covers different prediction types, such as the next activity, the remaining time, risks or the final outcome of the case \cite{difrancescomarino2022}. It relies on Machine Learning (ML) algorithms ranging from decision trees and their ensembles to sequential neural networks. An open question in the field is which family of algorithms suits each process. Zare et al.\ \cite{zare2025} propose answering it before training any model by means of the \emph{process entropy}, and this work evaluates that proposal on a real care process.
+
+The present work is part of a broader research project on the characterization of FTR in inpatients by means of ML and PM techniques. In that project, the \emph{Hospital Universitari de La Plana} collaborates with two research groups of Universitat Jaume I (UJI): the \emph{Grupo de Investigaci\'on en Aprendizaje Autom\'atico para Entornos Inteligentes} (GIANT) and the \emph{Grupo de Investigaci\'on en Enfermer\'ia} (GIENF). The \code{ftr\_cige\_v01} database comes from that project. It is hosted on a UJI server and contains, in anonymized form, the data of the adult patients hospitalized between March 2023 and April 2024. In addition to demographic data, the data included are diagnoses, surgical interventions, inter-service consultations, transfers between units, nursing assessments, vital signs and laboratory results. They are real, heterogeneous data with the limitations inherent to a clinical information system. This makes them a suitable case study to assess to what extent PPM techniques, usually developed and evaluated on public event logs, are applicable in a clinical setting.
+
+\section{Objectives}
+\label{sec:objetivos}
+
+The main objective of this \emph{Trabajo de Fin de M\'aster} (TFM) is \textbf{to evaluate and compare different PPM algorithms applied to healthcare event logs of hospitalized patients}. This general objective is broken down into the sub-objectives listed below, stated as they appear in the thesis proposal, with the acronyms normalized to those used in this report, and followed by a brief explanation of how each one was addressed.
+
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{Transform the healthcare dataset into an event log suitable for Process Mining and Predictive Process Monitoring analysis.} An event log was built from the hospital database, with case identifiers, activities, timestamps and contextual attributes.
+  \item \textbf{Analyze the structure and characteristics of the generated healthcare event log.} The event log was analyzed by means of process discovery techniques and conformance checking against a reference model.
+  \item \textbf{Study the state of the art of Predictive Process Monitoring methods, including model-based and Machine Learning-based approaches.} The PPM literature was reviewed and the experimental framework best suited to the clinical problem was identified.
+  \item \textbf{Select the most suitable algorithms to apply to the dataset.} Five algorithms representative of the ML families used in PPM were selected.
+  \item \textbf{Implement and evaluate several predictive algorithms for outcome prediction in healthcare processes.} The algorithms were implemented and evaluated on the event log for three prediction types.
+  \item \textbf{Compare different predictive approaches, including model-based and ML-based.} Both families were considered in the planning; after the literature analysis it was decided to focus the comparison on ML-based approaches, as explained in Chapter~\ref{cap:relatedwork}.
+  \item \textbf{Evaluate predictive performance using metrics such as accuracy, precision, recall, F1-score and AUC-ROC.} The results were evaluated with these metrics (AUC-ROC is the area under the receiver operating characteristic curve) and with complementary ones suited to imbalanced classes.
+  \item \textbf{Identify the most suitable predictive approaches for healthcare event logs related to Failure To Rescue scenarios.} The most suitable algorithms were identified and the results were contrasted with those predicted by the process entropy.
+\end{enumerate}
+
+\section{Scope}
+
+The project database contains a large amount of data of different nature about each hospitalization episode. In a first iteration of the work it was decided to narrow the study to the adult inpatient care process, considering only the events of the process: admissions, interventions, consultations, transfers and discharges. Vital-sign readings, laboratory results and nursing assessments were discarded because, owing to their frequency and nature, they do not describe the flow of the process but the state of the patient. The complete process has four branches, defined by two attributes of the admission: the admission type (elective or urgent) and the process type (surgical or medical). In a second iteration, in view of the variability of the complete process, the study was narrowed to one of the four branches, the \textbf{elective surgical care process}, i.e., to the episodes whose admission type is elective (scheduled) and whose process is surgical. This process is modeled with a Business Process Model and Notation (BPMN) diagram designed for this work. Its event log is built solely from the hospitalization, consultations, surgical interventions and transfers tables.
+
+Regarding prediction, the work focuses on three prediction types. The first is next-activity prediction, which is the reference prediction of the experimental approach followed and allows a direct comparison with the literature. The other two are outcome predictions and answer the clinical question of the project: the prediction of ICU admission without using the planning information recorded in the operating theater, and the prediction of prolonged length of stay. Two other clinical targets are also explored, unplanned ICU admission and postoperative complication. Because of the number of available cases or the nature of the label, they are presented as complementary analyses.
+
+The five algorithms evaluated are run with a basic configuration, without hyperparameter search, so that the comparison is between model families rather than between tuning efforts. Tuning, calibration and explainability of the models are left as future work.
+
+\section{Technological Framework}
+\label{sec:marco}
+
+The work was carried out with four PM tools, which are used in the analysis of the event log in Chapter~\ref{cap:implementacion}, and with a set of ML libraries. The event log was exported to the eXtensible Event Stream (XES) format for the first three tools.
+
+\begin{itemize}[leftmargin=*]
+  \item \textbf{ProM}\footnote{\url{https://promtools.org/}} \cite{verbeek2010} is the reference research environment in PM, with hundreds of plug-ins. ProM Lite 1.4 was used for the Interactive Data-aware Heuristics Miner (iDHM), the Inductive Miner and alignment-based replay.
+  \item \textbf{Disco}\footnote{\url{https://fluxicon.com/disco/}} (Fluxicon) \cite{gunther2012}, version 4.2.6, is a desktop tool oriented to exploratory analysis, with frequency and performance process maps, filters and case and variant statistics.
+  \item \textbf{Celonis}\footnote{\url{https://www.celonis.com/}} is a commercial cloud platform, used in its academic edition. It offers the Process Explorer and the Process Adherence Manager, which compares the event log with a reference BPMN model.
+  \item \textbf{PM4Py}\footnote{\url{https://processintelligence.solutions/pm4py}} \cite{berti2019}, version 2.7, is an open-source Python library that implements event-log import from comma-separated values (CSV) and XES files, the directly-follows graph (DFG), the Inductive Miner, the Heuristics Miner, alignments and the conversion between BPMN, Petri nets and process trees. It was the main tool of the work because it is programmable and reproducible.
+\end{itemize}
+
+The source database was downloaded from a PostgreSQL server by means of PowerShell scripts and the work was done on its CSV export. The event log and the whole analysis were programmed in Python 3 with pandas and NumPy. The tree-based predictive models were implemented with scikit-learn and the Extreme Gradient Boosting (XGBoost) library, and the two neural networks with PyTorch, trained on a two-core central processing unit (CPU); the metrics come from scikit-learn and the figures from Matplotlib. The code, the results of the final run and the LaTeX sources of this report are available in a public GitHub repository\footnote{\url{https://github.com/mr7security/tfm-ppm-ftr}}; the event logs and the database are not published because they contain clinical data. The reference BPMN model was designed with Camunda Modeler. The intermediate reports were written in Markdown and converted to PDF, and this report was written in \LaTeX. The code and the results are organized with one script per experiment and one results folder per run; each script fixes the random seeds and writes its metric tables, figures and execution log, so that any figure or table in this report can be regenerated by running the corresponding script again on the event log.
+
+\section{Methodology}
+\label{sec:metodologia}
+
+This section describes the academic context of the work and the initial planning and its deviations; the follow-up of the project by phases is described in Section~\ref{sec:seguimiento}.
+
+\subsection{Context of the Work}
+
+This TFM was carried out within the University Master's Degree in Intelligent Systems at UJI, as the compulsory course SIU043, with a workload of 14 European Credit Transfer and Accumulation System (ECTS) credits, which corresponds to 350 hours of student work. The work integrates knowledge from the courses Machine Learning (SJK003), Big Data Analytics (SJK006) and Process Mining (SJK013), and was developed under the supervision of two supervisors from the Department of Computer Languages and Systems.
+
+\subsection{Project Planning}
+
+Table~\ref{tab:planificacion} shows the schedule established in the thesis proposal, with the estimated hours for each task and its objective, up to a total of 348 hours; the remaining 2 hours of the 350 hours of the course correspond to the presentation of the work. The proposal structured the work in six phases. The first was the literature review and the definition of the predictive approach. The second, data preparation and event-log generation. The third, process modeling and feature engineering. The fourth, the implementation of the predictive models. The fifth, the experimental evaluation and the comparative analysis. The sixth, the interpretation of the results and the writing of this report.
+
+\begin{table}[htbp]
+\centering
+\caption{Project planning with tasks and hours.}
+\label{tab:planificacion}
+\begin{tabular}{L{5.2cm}C{1.8cm}L{6.6cm}}
+\toprule
+Task & Planned hours & Objective \\
+\midrule
+Problem analysis & 15 & Understand the information domain \\
+Study of process modeling & 10 & Propose and design a model of the care process \\
+State-of-the-art study & 30 & Understand the literature related to the problem domain \\
+Data preparation & 100 & Search, interpret, clean and format the information to apply PM \\
+Process discovery & 10 & Apply discovery techniques to obtain the real model of the care process \\
+Implementation of the predictive models & 120 & Program and test the predictive models on the case study \\
+Analysis of results & 15 & Compare the results obtained \\
+Supervision & 20 & Supervise the research work \\
+Writing of technical reports & 28 & Document the work carried out and the skills acquired \\
+\midrule
+\textbf{TOTAL} & \textbf{348} & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The plan was fulfilled in its entirety in terms of the objectives achieved, but it was necessary to redistribute the time among tasks, since some of them required more hours than initially estimated. Data preparation took longer than planned because the event log was built three times. A first version covering the complete hospital process was discarded when the scope was defined. A second version was built on the elective surgical admission process. A third version incorporated the postoperative destination as an activity in its own right, a decision that emerged from the discovery analysis. Process discovery also exceeded the ten hours estimated, since it was carried out with four tools and with conformance checking against two versions of the reference model. By contrast, the implementation of the predictive models was less costly than planned. Once the pipeline had been fixed in a preliminary test, the complete experiments ran in less than ten minutes of CPU time, and the time was devoted to the analysis of the results and to the writing of intermediate reports. Had all the objectives of the proposal been kept, with the complete hospital process and both families of predictive approaches, the time would clearly have exceeded the allocation.
+
+\section{Project Follow-Up}
+\label{sec:seguimiento}
+
+The development followed a sequential and iterative approach. Each phase produced a technical report that was reviewed with the supervisors and conditioned the next one. This way of working made it possible to take two decisions that proved decisive, the definition of the scope and the incorporation of the postoperative destination into the event log, without redoing the previous work.
+
+\subsection{Research Phase and Context Analysis}
+
+This phase included the problem analysis, the state-of-the-art study and the study of process modeling. The literature analysis, reported in Chapter~\ref{cap:background} and~\ref{cap:relatedwork}, covered PM in healthcare, PPM in its different prediction types, and the evaluation benchmarks of the field. From that analysis it was concluded that the Entropy-Driven Next Activity Prediction Approach of Zare et al.\ \cite{zare2025} was the one that best fitted the clinical problem to be solved, for three reasons. It explicitly compares interpretable models with deep models, which is the comparison of interest in a clinical setting. It proposes a criterion prior to training, the process entropy, which can be applied to any event log. Moreover, one of its evaluation event logs comes from healthcare, which makes it possible to place the event log of this work on its scale. The structure of the \code{ftr\_cige\_v01} database, with its 20 tables and its catalogs, was also studied, and a first BPMN model of the care process was designed.
+
+\subsection{Data Preparation and Event-Log Construction}
+
+This was the central phase of the project. The database was downloaded from the UJI server by means of export scripts, its tables were exported to CSV and the event log was built in three successive versions. The first version covered the complete hospital process, with one event per clinical act, including vital-sign readings, laboratory tests and nursing assessments. It served for a first exploration with the discovery tools, but proved intractable for a dedicated reference model. The second version, after the definition of the scope, covered only the elective surgical admission, built from four tables and aligned with a BPMN model designed for this work. On this version a preliminary PPM test was run that fixed the experimental pipeline. The third version incorporated the postoperative destination planned at the exit of the operating theater as an activity in its own right, after observing in the discovery that this decision almost completely explains the planned ICU admissions. It is the final version, described in Chapter~\ref{cap:datos}.
+
+In each version the data were checked for null values, duplicates and out-of-range dates, formats and encodings were unified, the relevant variables were selected and the warnings about possible information leakage were documented.
+
+\subsection{Process Discovery and Conformance Checking}
+
+On each version of the event log, discovery techniques (DFG, Inductive Miner and Heuristics Miner) were applied with ProM, Disco, Celonis and PM4Py, and conformance checking against the reference BPMN model with PM4Py and Celonis. The use of four tools served a twofold purpose. On the one hand, to validate that the event log is interpreted identically in all of them. On the other, to contrast the discovery algorithms with independent implementations. From this phase came the finding that conditions the experimental design, namely that the postoperative destination ICU implies ICU admission in 100\% of the cases.
+
+\subsection{Design and Implementation of the Predictive Models}
+
+The experimental design was fixed incrementally. A preliminary test on the second version of the event log established the prefixes, the two encodings, the temporal split and the basic configuration of the five prediction algorithms. On the third version, two sources of information leakage were identified and handled. The first is the planned postoperative destination recorded in the operating theater, which reveals the ICU admission: it gave rise to the variants of ICU-admission prediction, in which that information is hidden (A), kept (B) or made legitimate by restricting the population (C). The second is the number of coded diagnoses (\code{n\_diag}), which is assigned at discharge and grows with the complications: it was excluded from the models. Then prolonged length of stay and postoperative complication were added as targets. Finally, the three prediction types of the work were consolidated into a single reproducible run. Table~\ref{tab:cronologia} summarizes the milestones of this phase and the decision taken at each one.
+
+\begin{table}[htbp]
+\centering
+\caption{Milestones of the predictive phase and the decision taken at each one.}
+\label{tab:cronologia}
+\small
+\begin{tabular}{L{1.6cm}L{4.6cm}L{7.2cm}}
+\toprule
+Date & Milestone & Decision or finding \\
+\midrule
+Sep 17 & Scope narrowed with the supervisors & Only the elective surgical admission, with a BPMN model designed for this work and four tables of the database. Second version of the event log. \\
+Sep 19 & Preliminary PPM test on the second version & Pipeline fixed: prefixes, two encodings, temporal split and five algorithms. Discriminative ability of 0.85--0.88 for ICU admission. \\
+Sep 28 & Third version of the event log & The postoperative destination becomes an activity (\code{DESTINO\_*}). Discovery with four tools shows that \code{DESTINO\_UCI} always precedes \code{INGRESO\_UCI}. \\
+Sep 29 & Variants A, B and C of ICU admission & The destination is planning, not prediction; leakage through \code{n\_diag} detected; next-activity prediction (F) added. \\
+Oct 2 & Targets D and E; final run & Postoperative complication (D) and prolonged length of stay (E) added. Scope fixed: Predictions~1 (F), 2 (A) and 3 (E) in a single reproducible run. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Evaluation and Analysis}
+
+The evaluation was iterative. Each experiment was documented in a report with its metric tables, curves and interpretation, which was discussed before deciding the next step. Special attention was paid to interpreting why a model performs as it does, i.e., which variables it uses, what happens when the prefix is lengthened and where information leakage may occur, and not only to comparing figures. That interpretation is what made it possible to identify that part of the apparent performance came from planning information and not from predictive ability.
+
+\subsection{Future Work}
+
+Throughout the project, the avenues that could not be addressed without deviating from the objectives were noted. Four of them stand out. Hyperparameter tuning and the calibration of the deep models would improve performance, but would not change the nature of the comparison. Explainability through SHapley Additive exPlanations (SHAP) values would make it possible to contrast with clinical judgment which variables support each prediction. An intermediate target of `unplanned complication', which excludes the planned ICU admissions, would have more cases than unplanned ICU admission without the heterogeneity of postoperative complication. Finally, the extension of the population to all surgical admissions, elective and urgent, would increase the number of cases of the scarcest outcomes. They are collected in Chapter~\ref{cap:conclusiones}.
+
+\section{Structure of the Report}
+
+The report is organized into six chapters.
+
+\textbf{Chapter~\ref{cap:introduccion}}, Introduction, presents the context, the motivation, the objectives, the scope and the technological framework of the work, together with the methodology followed and the follow-up of the project by phases.
+
+\textbf{Chapter~\ref{cap:background}}, Background, reviews the foundations on which the study rests: the clinical data of hospitalized patients and the concept of FTR, PM, PPM and the ML algorithms compared.
+
+\textbf{Chapter~\ref{cap:relatedwork}}, Related Work, reviews previous work on PPM and its application to healthcare processes, and presents in detail the Entropy-Driven Next Activity Prediction Approach of Zare et al.\ \cite{zare2025}, which this work adopts.
+
+\textbf{Chapter~\ref{cap:datos}}, Data and Event Log, presents the source database, the reference BPMN model of the elective surgical admission process, the construction of its event log, its activities, attributes and candidate labels, the warnings about information leakage and the process entropy that condition the experimental design.
+
+\textbf{Chapter~\ref{cap:implementacion}}, Implementation, covers process discovery and conformance checking with the four tools, the PPM experimental design, the results of the three prediction types (next activity, ICU admission and prolonged length of stay), the complementary analyses and the comparison with the protocol of Zare et al.\ \cite{zare2025}.
+
+\textbf{Chapter~\ref{cap:conclusiones}}, Conclusions, summarizes the findings, contrasts them with the objectives and proposes lines of future work.

@@ -1,0 +1,67 @@
+\chapter{Methodology}
+\label{cap:metodologia}
+
+This chapter describes the academic context of the work, the initial planning and its deviations, and the follow-up of the project by phases. The tools employed are described in Section~\ref{sec:marco}.
+
+\section{Context of the Work}
+
+This \emph{Trabajo de Fin de M\'aster} (TFM) was carried out within the University Master's Degree in Intelligent Systems at Universitat Jaume I (UJI), as the compulsory course SIU043, with a workload of 12 ECTS credits, which corresponds to 300 hours of student work. The work integrates knowledge from the courses Machine Learning (SJK003), Big Data Analytics (SJK006) and Process Mining (SJK013), and was developed under the supervision of two supervisors from the Department of Computer Science and Engineering.
+
+\section{Project Planning}
+
+Table~\ref{tab:planificacion} shows the schedule established in the thesis proposal, with the estimated hours for each task and its objective, up to a total of 348 hours. The proposal structured the work in six phases. The first was the literature review and the definition of the predictive approach. The second, data preparation and event-log generation. The third, process modeling and feature engineering. The fourth, the implementation of the predictive models. The fifth, the experimental evaluation and the comparative analysis. The sixth, the interpretation of the results and the writing of this report.
+
+\begin{table}[htbp]
+\centering
+\caption{Project planning with tasks and hours.}
+\label{tab:planificacion}
+\begin{tabular}{L{5.2cm}C{1.8cm}L{6.6cm}}
+\toprule
+Task & Planned hours & Objective \\
+\midrule
+Problem analysis & 15 & Understand the information domain \\
+Study of process modeling & 10 & Propose and design a model of the care process \\
+State-of-the-art study & 30 & Understand the literature related to the problem domain \\
+Data preparation & 100 & Search, interpret, clean and format the information to apply PM \\
+Process discovery & 10 & Apply discovery techniques to obtain the real model of the care process \\
+Implementation of the predictive models & 120 & Program and test the predictive models on the case study \\
+Analysis of results & 15 & Compare the results obtained \\
+Supervision & 20 & Supervise the research work \\
+Writing of technical reports & 28 & Document the work carried out and the skills acquired \\
+\midrule
+\textbf{TOTAL} & \textbf{348} & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The plan was fulfilled in its entirety in terms of the objectives achieved, but it was necessary to redistribute the time among tasks, since some of them required more hours than initially estimated. Data preparation took longer than planned because the event log was built three times. A first version covering the complete hospital process was discarded when the scope was defined. A second version was built on the elective surgical admission process. A third version incorporated the postoperative destination as an activity in its own right, a decision that emerged from the discovery analysis. Process discovery also exceeded the ten hours estimated, since it was carried out with four tools and with conformance checking against two versions of the reference model. In return, the implementation of the predictive models was less costly than planned. Once the pipeline had been fixed in a preliminary test, the complete experiments ran in less than ten minutes of CPU time, and the time was devoted to the analysis of the results and to the writing of intermediate reports. Had all the objectives of the proposal been kept, with the complete hospital process and both families of predictive approaches, the time would clearly have exceeded the allocation.
+
+\section{Project Follow-Up}
+
+The development followed a sequential and iterative approach. Each phase produced a technical report that was reviewed with the supervisors and conditioned the next one. This way of working made it possible to take two decisions that proved decisive, the definition of the scope and the incorporation of the postoperative destination into the event log, without redoing the previous work.
+
+\subsection{Research Phase and Context Analysis}
+
+This phase included the problem analysis, the state-of-the-art study and the study of process modeling. The literature analysis, reported in Chapters~\ref{cap:background} and~\ref{cap:relatedwork}, covered PM in healthcare, PPM in its different prediction types, and the evaluation benchmarks of the field. From that analysis it was concluded that the experimental framework of Zare et al.\ \cite{zare2025} was the one that best fitted the clinical problem to be solved, for three reasons. It explicitly compares interpretable models with deep models, which is the comparison of interest in a clinical setting. It proposes a criterion prior to training, the process entropy, which can be applied to any event log. And one of its evaluation event logs comes from healthcare, which makes it possible to place the event log of this work on its scale. The structure of the \code{ftr\_cige\_v01} database, with its 20 tables and its catalogs, was also studied, and a first BPMN model of the care process was designed.
+
+\subsection{Data Preparation and Event-Log Construction}
+
+This was the central phase of the project. The database was downloaded from the UJI server by means of export scripts, its tables were exported to CSV and the event log was built in three successive versions. The first version covered the complete hospital process, with one event per clinical act, including vital-sign readings, laboratory tests and nursing assessments. It served for a first exploration with the discovery tools, but proved intractable for a dedicated reference model. The second version, after the definition of the scope, covered only the elective surgical admission, built from four tables and aligned with a BPMN model designed for this work. On this version a preliminary PPM test was run that fixed the experimental pipeline. The third version incorporated the postoperative destination planned at the exit of the operating theater as an activity in its own right, after observing in the discovery that this decision almost completely explains the planned ICU admissions. It is the final version, described in Chapter~\ref{cap:datos}.
+
+In each version the quality of the data was checked for null values, duplicates and out-of-range dates, formats and encodings were unified, the relevant variables were selected and the warnings about possible information leakage were documented.
+
+\subsection{Process Discovery and Conformance Checking}
+
+On each version of the event log, discovery techniques (DFG, Inductive Miner and Heuristics Miner) and conformance checking against the reference BPMN model were applied with ProM, Disco, Celonis and PM4Py. The use of four tools served a twofold purpose. On the one hand, to validate that the event log is interpreted identically in all of them. On the other, to contrast the discovery algorithms with independent implementations. From this phase came the finding that conditions the experimental design, namely that the postoperative destination ICU implies ICU admission in 100\% of the cases.
+
+\subsection{Design and Implementation of the Predictive Models}
+
+The experimental design was fixed incrementally. A preliminary test on the second version of the event log established the prefixes, the two encodings, the temporal split and the basic configuration of the five algorithms. On the third version, the variants of ICU-admission prediction were defined, an information leakage through the number of diagnoses was detected and corrected, and prolonged length of stay and postoperative complication were added as targets. Finally, the three prediction types of the work were consolidated into a single reproducible run.
+
+\subsection{Evaluation and Analysis}
+
+The evaluation was iterative. Each experiment was documented in a report with its metric tables, curves and interpretation, which was discussed before deciding the next step. Special attention was paid to interpreting why a model performs as it does, i.e., which variables it uses, what happens when the prefix is lengthened and where information leakage may occur, and not only to comparing figures. That interpretation is what made it possible to identify that part of the apparent performance came from planning information and not from predictive ability.
+
+\subsection{Future Work}
+
+Throughout the project, the avenues that could not be addressed without deviating from the objectives were noted. Among them, hyperparameter tuning and the calibration of the deep models, which would improve performance but would not change the nature of the comparison; explainability through SHapley Additive exPlanations (SHAP) values, which would make it possible to contrast with clinical judgment which variables support each prediction; the definition of an intermediate target of ``unplanned complication,'' which excludes the planned ICU admissions and thus has more cases than unplanned ICU admission without the heterogeneity of postoperative complication; and the extension of the population to all surgical admissions, elective and urgent, to increase the number of cases of the scarcest outcomes. They are collected in Chapter~\ref{cap:conclusiones}.
