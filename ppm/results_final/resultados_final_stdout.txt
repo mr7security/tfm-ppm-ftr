@@ -1,0 +1,93 @@
+Event log v3: 1475 casos, 7780 eventos, 14 actividades, 97 variantes
+Entropía del proceso (con START/END): 3.544 bits / 2.456 nats, 63 transiciones distintas
+Entropía del proceso (sin START/END): 3.394 bits / 2.352 nats, 59 transiciones distintas
+Receta: 5 algoritmos, semillas [0, 1, 2], k = 1..6, partición temporal 64/16/20, estáticos excluidos ['n_diag']
+
+##### TAREA 1: ingreso en UCI sin planificación (variante A)
+
+=== outcome_A (variante A, objetivo label_ingreso_uci, casos 1475) ===
+prefijos 4457 (train 2855 / val 742 / test 860), positivos 334 (test 70), features agregadas 59
+  DecisionTree  seed 0: AUC-ROC 0.756  AUC-PR 0.207  F1 0.293 (umbral 0.76, recall 0.34, prec 0.26)  bal.acc 0.627  0.0s 
+  DecisionTree  seed 1: AUC-ROC 0.756  AUC-PR 0.207  F1 0.293 (umbral 0.76, recall 0.34, prec 0.26)  bal.acc 0.627  0.0s 
+  DecisionTree  seed 2: AUC-ROC 0.752  AUC-PR 0.201  F1 0.287 (umbral 0.76, recall 0.34, prec 0.25)  bal.acc 0.625  0.0s 
+  RandomForest  seed 0: AUC-ROC 0.874  AUC-PR 0.395  F1 0.367 (umbral 0.64, recall 0.29, prec 0.51)  bal.acc 0.631  1.9s 
+  RandomForest  seed 1: AUC-ROC 0.877  AUC-PR 0.408  F1 0.418 (umbral 0.45, recall 0.54, prec 0.34)  bal.acc 0.725  2.0s 
+  RandomForest  seed 2: AUC-ROC 0.876  AUC-PR 0.395  F1 0.400 (umbral 0.44, recall 0.53, prec 0.32)  bal.acc 0.715  2.0s 
+  XGBoost       seed 0: AUC-ROC 0.850  AUC-PR 0.280  F1 0.400 (umbral 0.60, recall 0.54, prec 0.32)  bal.acc 0.720  0.5s trees=167
+  XGBoost       seed 1: AUC-ROC 0.849  AUC-PR 0.281  F1 0.356 (umbral 0.71, recall 0.37, prec 0.34)  bal.acc 0.654  0.2s trees=120
+  XGBoost       seed 2: AUC-ROC 0.841  AUC-PR 0.279  F1 0.331 (umbral 0.75, recall 0.31, prec 0.35)  bal.acc 0.631  0.2s trees=192
+  LSTM          seed 0: AUC-ROC 0.888  AUC-PR 0.399  F1 0.449 (umbral 0.87, recall 0.47, prec 0.43)  bal.acc 0.708  32.1s epochs=44
+  LSTM          seed 1: AUC-ROC 0.887  AUC-PR 0.426  F1 0.460 (umbral 0.81, recall 0.57, prec 0.38)  bal.acc 0.745  15.9s epochs=43
+  LSTM          seed 2: AUC-ROC 0.883  AUC-PR 0.412  F1 0.435 (umbral 0.79, recall 0.50, prec 0.38)  bal.acc 0.715  18.6s epochs=52
+  Transformer   seed 0: AUC-ROC 0.883  AUC-PR 0.402  F1 0.432 (umbral 0.80, recall 0.43, prec 0.43)  bal.acc 0.690  36.2s epochs=40
+  Transformer   seed 1: AUC-ROC 0.890  AUC-PR 0.413  F1 0.481 (umbral 0.81, recall 0.54, prec 0.43)  bal.acc 0.740  46.3s epochs=53
+  Transformer   seed 2: AUC-ROC 0.885  AUC-PR 0.418  F1 0.453 (umbral 0.83, recall 0.44, prec 0.46)  bal.acc 0.699  33.3s epochs=38
+             auc_roc        auc_pr            f1        bal_acc        recall        precision         brier        tiempo_s       
+                mean    std   mean    std   mean    std    mean    std   mean    std      mean    std   mean    std     mean    std
+modelo                                                                                                                             
+DecisionTree   0.754  0.002  0.205  0.004  0.291  0.003   0.626  0.001  0.343  0.000     0.253  0.005  0.165  0.002    0.022  0.014
+LSTM           0.886  0.003  0.413  0.014  0.448  0.013   0.723  0.020  0.514  0.052     0.399  0.025  0.161  0.017   22.209  8.682
+RandomForest   0.876  0.002  0.399  0.007  0.395  0.026   0.690  0.052  0.452  0.145     0.391  0.106  0.081  0.001    1.962  0.054
+Transformer    0.886  0.004  0.411  0.008  0.455  0.025   0.709  0.027  0.471  0.062     0.443  0.017  0.139  0.003   38.602  6.859
+XGBoost        0.846  0.005  0.280  0.001  0.362  0.035   0.668  0.046  0.410  0.119     0.336  0.017  0.111  0.003    0.292  0.154
+
+##### TAREA 2: estancia prolongada (> 8.74 días)
+
+--- outcome_E: casos con algún prefijo 1475/1475; positivos con algún prefijo 148/148; prefijos por k: {1: 1475, 2: 1374, 3: 1345, 4: 1335, 5: 364, 6: 94}; positivos por k: {1: 148, 2: 144, 3: 141, 4: 138, 5: 99, 6: 51}
+
+=== outcome_E (variante B, objetivo label_estancia_prolongada, casos 1475) ===
+prefijos 5987 (train 3831 / val 996 / test 1160), positivos 721 (test 137), features agregadas 61
+  DecisionTree  seed 0: AUC-ROC 0.829  AUC-PR 0.416  F1 0.569 (umbral 0.90, recall 0.64, prec 0.51)  bal.acc 0.777  0.0s 
+  DecisionTree  seed 1: AUC-ROC 0.829  AUC-PR 0.416  F1 0.569 (umbral 0.90, recall 0.64, prec 0.51)  bal.acc 0.777  0.0s 
+  DecisionTree  seed 2: AUC-ROC 0.829  AUC-PR 0.416  F1 0.569 (umbral 0.90, recall 0.64, prec 0.51)  bal.acc 0.777  0.0s 
+  RandomForest  seed 0: AUC-ROC 0.895  AUC-PR 0.461  F1 0.552 (umbral 0.64, recall 0.53, prec 0.58)  bal.acc 0.737  1.8s 
+  RandomForest  seed 1: AUC-ROC 0.896  AUC-PR 0.480  F1 0.594 (umbral 0.58, recall 0.62, prec 0.57)  bal.acc 0.779  1.8s 
+  RandomForest  seed 2: AUC-ROC 0.896  AUC-PR 0.484  F1 0.597 (umbral 0.56, recall 0.65, prec 0.55)  bal.acc 0.790  2.1s 
+  XGBoost       seed 0: AUC-ROC 0.883  AUC-PR 0.478  F1 0.566 (umbral 0.73, recall 0.56, prec 0.57)  bal.acc 0.753  0.2s trees=54
+  XGBoost       seed 1: AUC-ROC 0.887  AUC-PR 0.491  F1 0.515 (umbral 0.78, recall 0.50, prec 0.54)  bal.acc 0.719  0.3s trees=133
+  XGBoost       seed 2: AUC-ROC 0.879  AUC-PR 0.465  F1 0.538 (umbral 0.76, recall 0.52, prec 0.56)  bal.acc 0.732  0.1s trees=52
+  LSTM          seed 0: AUC-ROC 0.899  AUC-PR 0.536  F1 0.610 (umbral 0.85, recall 0.65, prec 0.57)  bal.acc 0.793  15.8s epochs=31
+  LSTM          seed 1: AUC-ROC 0.901  AUC-PR 0.554  F1 0.589 (umbral 0.84, recall 0.59, prec 0.59)  bal.acc 0.768  13.3s epochs=27
+  LSTM          seed 2: AUC-ROC 0.903  AUC-PR 0.552  F1 0.618 (umbral 0.76, recall 0.68, prec 0.57)  bal.acc 0.805  14.0s epochs=26
+  Transformer   seed 0: AUC-ROC 0.889  AUC-PR 0.540  F1 0.571 (umbral 0.82, recall 0.58, prec 0.56)  bal.acc 0.761  31.7s epochs=27
+  Transformer   seed 1: AUC-ROC 0.885  AUC-PR 0.528  F1 0.585 (umbral 0.84, recall 0.59, prec 0.58)  bal.acc 0.767  28.3s epochs=23
+  Transformer   seed 2: AUC-ROC 0.888  AUC-PR 0.532  F1 0.485 (umbral 0.89, recall 0.42, prec 0.57)  bal.acc 0.690  26.9s epochs=22
+             auc_roc        auc_pr            f1        bal_acc        recall        precision         brier        tiempo_s       
+                mean    std   mean    std   mean    std    mean    std   mean    std      mean    std   mean    std     mean    std
+modelo                                                                                                                             
+DecisionTree   0.829  0.000  0.416  0.000  0.569  0.000   0.777  0.000  0.635  0.000     0.515  0.000  0.148  0.000    0.016  0.000
+LSTM           0.901  0.002  0.547  0.010  0.606  0.015   0.788  0.019  0.640  0.045     0.576  0.010  0.127  0.009   14.328  1.302
+RandomForest   0.896  0.000  0.475  0.012  0.581  0.026   0.769  0.028  0.599  0.065     0.568  0.014  0.091  0.001    1.894  0.151
+Transformer    0.887  0.002  0.533  0.006  0.547  0.054   0.739  0.043  0.533  0.095     0.569  0.010  0.148  0.007   28.946  2.465
+XGBoost        0.883  0.004  0.478  0.013  0.540  0.026   0.735  0.017  0.526  0.033     0.555  0.018  0.119  0.007    0.190  0.078
+
+##### TAREA 3: siguiente actividad
+
+=== nextact ===
+prefijos 6013, clases 13: INTERCONSULTA_ESPECIALISTA 349, INTERCONSULTA_UCI 11, QUIROFANO_INICIO 1373, QUIROFANO_FIN 1366, DESTINO_PLANTA 1184, DESTINO_UCI 110, DESTINO_REANIMACION 52, DESTINO_OTROS 7, INGRESO_UCI 136, TRASLADO_PLANTA 18, TRASLADO_OTRO_HOSPITAL 1, EXITUS 3, ALTA 1403
+  DecisionTree  seed 0: accuracy 0.745  F1-macro 0.352  F1-pond 0.806  0.0s 
+  DecisionTree  seed 1: accuracy 0.746  F1-macro 0.352  F1-pond 0.806  0.0s 
+  DecisionTree  seed 2: accuracy 0.748  F1-macro 0.353  F1-pond 0.808  0.0s 
+  RandomForest  seed 0: accuracy 0.881  F1-macro 0.527  F1-pond 0.891  2.0s 
+  RandomForest  seed 1: accuracy 0.885  F1-macro 0.528  F1-pond 0.894  2.1s 
+  RandomForest  seed 2: accuracy 0.883  F1-macro 0.526  F1-pond 0.893  2.1s 
+  XGBoost       seed 0: accuracy 0.908  F1-macro 0.519  F1-pond 0.904  1.9s trees=189
+  XGBoost       seed 1: accuracy 0.908  F1-macro 0.520  F1-pond 0.904  3.1s trees=236
+  XGBoost       seed 2: accuracy 0.904  F1-macro 0.515  F1-pond 0.901  1.8s trees=199
+  LSTM          seed 0: accuracy 0.913  F1-macro 0.530  F1-pond 0.909  14.0s epochs=25
+  LSTM          seed 1: accuracy 0.913  F1-macro 0.525  F1-pond 0.908  13.2s epochs=24
+  LSTM          seed 2: accuracy 0.914  F1-macro 0.532  F1-pond 0.910  10.9s epochs=22
+  Transformer   seed 0: accuracy 0.917  F1-macro 0.537  F1-pond 0.912  35.1s epochs=30
+  Transformer   seed 1: accuracy 0.911  F1-macro 0.522  F1-pond 0.906  29.1s epochs=25
+  Transformer   seed 2: accuracy 0.908  F1-macro 0.520  F1-pond 0.903  49.9s epochs=40
+  baseline (siguiente más frecuente dada la última actividad): accuracy 0.867  F1-macro 0.399
+             accuracy        f1_macro        f1_weighted        tiempo_s        
+                 mean    std     mean    std        mean    std     mean     std
+modelo                                                                          
+DecisionTree    0.746  0.001    0.352  0.000       0.807  0.001    0.024   0.000
+LSTM            0.913  0.000    0.529  0.004       0.909  0.001   12.692   1.580
+RandomForest    0.883  0.002    0.527  0.001       0.893  0.001    2.091   0.050
+Transformer     0.912  0.005    0.526  0.009       0.907  0.005   38.015  10.719
+XGBoost         0.906  0.002    0.518  0.003       0.903  0.002    2.267   0.725
+
+Tiempo total: 551 s
