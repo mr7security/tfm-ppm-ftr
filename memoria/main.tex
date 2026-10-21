@@ -1,0 +1,208 @@
+% =====================================================================
+%  Memoria del Trabajo Final de Máster
+%  Plantilla propia que replica el aspecto del TFM modelo (UJI, 2025):
+%  clase book, A4, babel inglés (memoria íntegramente en inglés americano), hyperref, IEEEtran.
+% =====================================================================
+\documentclass[a4paper,11pt,oneside]{book}
+
+% --- Idioma y fuentes. Funciona con pdfLaTeX (por defecto en Overleaf) y con XeLaTeX/LuaLaTeX.
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[utf8]{inputenc}
+  \usepackage[T1]{fontenc}
+  \usepackage{lmodern}
+  \usepackage[english]{babel}
+\else
+  \usepackage{fontspec}
+  \setmainfont{Latin Modern Roman}[SmallCapsFont={Latin Modern Roman Caps}]
+  \setsansfont{Latin Modern Sans}
+  \setmonofont{Latin Modern Mono}
+  \usepackage{polyglossia}
+  \setmainlanguage{english}
+\fi
+\usepackage[a4paper,top=2.5cm,bottom=2.5cm,left=3cm,right=2.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{amsmath,amssymb}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{microtype}
+\usepackage{csquotes}
+\usepackage{setspace}
+\usepackage{float}
+\usepackage{rotating}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric,calc,fit,backgrounds}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage[hidelinks,pdfusetitle]{hyperref}
+\usepackage{url}
+\usepackage{emptypage}
+\usepackage{etoolbox}
+% IEEEtran.bst escribe «et al.» en cursiva; la norma de formato lo exige en redonda
+\AtBeginEnvironment{thebibliography}{\renewcommand{\emph}[1]{\ifstrequal{#1}{et~al.}{et~al.}{\textit{#1}}}}
+
+\graphicspath{{figuras/}}
+\captionsetup{font=small,labelfont=bf}
+\setlength{\parskip}{6pt}
+\onehalfspacing
+\setlist{nosep}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcommand{\code}[1]{\texttt{#1}}
+\setlength{\emergencystretch}{2em}
+
+% ---------- datos de la portada ----------
+\newcommand{\tfmTitulo}{Evaluating Algorithms for Predictive Process Monitoring in Adult Inpatient Care Processes}
+\newcommand{\tfmAutorNombre}{Miguel}
+\newcommand{\tfmAutorApellidos}{Rebolledo Romero}
+\newcommand{\tfmTutorA}{Reyes \textsc{Grangel Seguer}}
+\newcommand{\tfmTutorB}{Juan Carlos \textsc{Amengual Argudo}}
+\newcommand{\tfmMaster}{University Master's Degree in Intelligent Systems}
+\newcommand{\tfmFecha}{October 27, 2026}
+\newcommand{\tfmCurso}{2025/2026}
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+
+\begin{document}
+
+% =====================================================================
+\frontmatter
+\pagestyle{empty}
+
+% ---------- Portada (plantilla UJI / VALGRAI) ----------
+\begin{titlepage}
+\begin{center}
+
+% Logotipos
+\includegraphics[width=0.18\textwidth]{logoUJI2.jpg}~\\[2cm]
+
+\textsc{\LARGE \tfmMaster}\\[1.5cm]
+
+\textsc{\LARGE Master Thesis}\\[1.5cm]
+%%%%%%\textsc{\LARGE Provisional Version}\\[1.5cm]
+
+% Título
+\HRule \\[0.4cm]
+{ \huge \bfseries \tfmTitulo \\[0.4cm] }
+\HRule \\[1.5cm]
+
+% Autor y supervisores
+\begin{minipage}{0.48\textwidth}
+\begin{flushleft} \large
+\emph{Author:}\\
+\tfmAutorNombre\ \textsc{\tfmAutorApellidos}
+\end{flushleft}
+\end{minipage}
+\begin{minipage}{0.48\textwidth}
+\begin{flushright} \large
+\emph{Supervisors:} \\
+\tfmTutorA \\
+\tfmTutorB
+\end{flushright}
+\end{minipage}
+
+\vfill
+
+% Pie de la portada
+{\large Date of presentation: \tfmFecha\\
+Academic year \tfmCurso}
+
+\end{center}
+\end{titlepage}
+
+% ---------- Dedicatoria ----------
+\cleardoublepage
+\vspace*{\fill}
+\begin{flushright}
+\itshape
+[Dedication]
+\end{flushright}
+\vspace*{\fill}
+
+% ---------- Agradecimientos ----------
+\cleardoublepage
+\chapter*{Acknowledgments}
+I would like to express my gratitude to my supervisors, Reyes Grangel Seguer and Juan Carlos Amengual Argudo, for their guidance and dedication throughout this work, and for the methodological decisions that have given it its final shape. I thank the \emph{Hospital Universitari de La Plana} for providing the data on which the study has been built. I also thank the two research groups of Universitat Jaume I that work with them, the \emph{Grupo de Investigaci\'on en Aprendizaje Autom\'atico para Entornos Inteligentes} (GIANT) and the \emph{Grupo de Investigaci\'on en Enfermer\'ia} (GIENF), for the access to the database and their support during its analysis. Finally, I thank my family for their patience during the months of work.
+
+% ---------- Resumen ----------
+\cleardoublepage
+\chapter*{Abstract}
+The research work presented in this report aims to apply Predictive Process Monitoring (PPM) techniques to adult inpatient data, with the objective of experimentally comparing several prediction algorithms on a real care process. As a prior step to the predictive work, classic Process Mining (PM) techniques were applied to the \code{ftr\_cige\_v01} database. An event log of the elective surgical admission care process was built and the process was modeled in Business Process Model and Notation (BPMN). The event log was analyzed with four PM tools (ProM, Disco, Celonis and PM4Py) and validated, together with the model, by means of process discovery and conformance checking. The event log is built around the observable precursors of Failure To Rescue (FTR): ICU admission, prolonged length of stay and death.
+
+On that event log, five prediction algorithms were evaluated, Decision Tree (DT), Random Forest (RF), Extreme Gradient Boosting (XGBoost), Long Short-Term Memory (LSTM) and Transformer, for three prediction types: next-activity prediction, the prediction of ICU admission without planning information and the prediction of prolonged length of stay. The results show that the next activity is predicted with an accuracy clearly above that of a trivial predictor, and that both ICU admission and prolonged length of stay can be anticipated with high discriminative ability. Sequence models outperform the classical ensemble by a small margin, while RF proves to be the most robust and best calibrated model, which agrees with what the process entropy predicts by placing the event log in the medium band. As future lines, hyperparameter tuning, calibration and explainability of the models are pointed out, as well as the extension of the studied population to address the scarcest clinical outcomes.
+
+\section*{Keywords}
+Process Mining, Predictive Process Monitoring, Event Log, Failure To Rescue, Inpatient Care, Machine Learning.
+
+% ---------- Índices ----------
+\cleardoublepage
+\pagestyle{plain}
+\tableofcontents
+\cleardoublepage
+\listoffigures
+\cleardoublepage
+\listoftables
+\cleardoublepage
+\chapter*{List of Acronyms}
+\begin{longtable}{@{}p{3.4cm}p{11.2cm}@{}}
+AUC-PR & Area under the precision--recall curve \\
+AUC-ROC & Area under the receiver operating characteristic curve \\
+BiLSTM & Bidirectional Long Short-Term Memory \\
+BPIC & Business Process Intelligence Challenge \\
+BPM & Business Process Management \\
+BPMN & Business Process Model and Notation \\
+CNN & Convolutional Neural Network \\
+CPU & Central processing unit \\
+CSV & Comma-separated values \\
+DAW-Transformer & Dynamic Attribute-Aware Transformer \\
+DFG & Directly-follows graph \\
+DL & Deep Learning \\
+DT & Decision Tree \\
+ECTS & European Credit Transfer and Accumulation System \\
+FFN & Feed-forward network \\
+FTR & Failure To Rescue \\
+GIANT & \emph{Grupo de Investigaci\'on en Aprendizaje Autom\'atico para Entornos Inteligentes} \\
+GIENF & \emph{Grupo de Investigaci\'on en Enfermer\'ia} \\
+ICD-10 & International Classification of Diseases, 10th revision \\
+ICU & Intensive care unit \\
+iDHM & Interactive Data-aware Heuristics Miner \\
+LSTM & Long Short-Term Memory \\
+ML & Machine Learning \\
+PM & Process Mining \\
+PPM & Predictive Process Monitoring \\
+ReLU & Rectified linear unit \\
+RF & Random Forest \\
+ROC & Receiver operating characteristic \\
+SHAP & SHapley Additive exPlanations \\
+TFM & \emph{Trabajo de Fin de M\'aster} (Master's Thesis) \\
+UJI & Universitat Jaume I \\
+XAI & Explainable Artificial Intelligence \\
+XES & eXtensible Event Stream \\
+XGBoost & Extreme Gradient Boosting \\
+\end{longtable}
+
+% =====================================================================
+\mainmatter
+\pagestyle{headings}
+
+\include{capitulos/introduccion}
+\include{capitulos/background}
+\include{capitulos/relatedwork}
+\include{capitulos/datos}
+\include{capitulos/implementacion}
+\include{capitulos/conclusiones}
+
+% =====================================================================
+\backmatter
+% Estilo IEEE numérico por orden de aparición (IEEEtran.bst está en Overleaf)
+\renewcommand{\bibname}{References}
+\bibliographystyle{IEEEtran}
+\bibliography{bibliografia}
+
+\end{document}
