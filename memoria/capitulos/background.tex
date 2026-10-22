@@ -1,12 +1,12 @@
 \chapter{Background}
 \label{cap:background}
 
-This chapter presents the foundations needed to put the project in context. First, the clinical data generated during the hospitalization of adult patients and the concept of FTR are described. Then PM and the concept of event log are introduced. After that, PPM is described, together with its prediction types and the usual way of evaluating it. The chapter ends with a description of the five ML algorithms compared in this work.
+This chapter presents the foundations needed to put the project in context. First, the clinical data generated during the adult inpatients and the concept of FTR are described. Then PM and the concept of event log are introduced. After that, PPM is described, together with its prediction types and the usual way of evaluating it. The chapter ends with a description of the five ML algorithms compared in this work.
 
 \section{Clinical Data of Inpatients and Failure To Rescue}
 \label{sec:datos_clinicos}
 
-During the hospitalization of an adult patient, the hospital information system records the episode from admission to discharge. Associated with the episode are the administrative data (admission and discharge dates, admission type, responsible service, discharge reason), the demographic data of the patient, the admission diagnosis and the diagnostic coding at discharge according to the International Classification of Diseases (ICD-10), and the care acts that take place during the stay. These acts include surgical interventions, with their type, anesthesia and postoperative destination; inter-service consultations; transfers between units, in particular to the ICU; nursing assessments; vital-sign readings; and laboratory results.
+During the hospitalization of an adult inpatient, the hospital information system records the episode from admission to discharge. Associated with the episode are the administrative data (admission and discharge dates, admission type, responsible service, discharge reason), the demographic data of the patient, the admission diagnosis and the diagnostic coding at discharge according to the International Classification of Diseases (ICD-10), and the care acts that take place during the stay. These acts include surgical interventions, with their type, anesthesia and postoperative destination; inter-service consultations; transfers between units, in particular to the ICU; nursing assessments; vital-sign readings; and laboratory results.
 
 In the nursing field, the assessment of the inpatient relies on standardized indices that measure fall risk, functional capacity, pressure injury risk and comorbidity. The VALENF instrument \cite{lunaaleixos2022}, developed and validated in adult hospitalization units, integrates that assessment into a single meta-instrument. It is one of the sources of the nursing assessments recorded in the project database.
 

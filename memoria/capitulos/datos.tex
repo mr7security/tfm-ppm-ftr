@@ -160,7 +160,7 @@ The event log of Section~\ref{sec:construccion} is built so that its activities 
 \begin{sidewaysfigure}[p]
 \centering
 \includegraphics[width=\textheight]{bpmn_proceso_asistencial}
-\caption{Reference BPMN model of the elective surgical admission process (TO-BE model).}
+\caption{BPMN reference model of the elective surgical admission process (TO-BE model).}
 \label{fig:bpmn}
 \end{sidewaysfigure}
 
@@ -201,25 +201,36 @@ Activity & Construction rule & BPMN element (Figure~\ref{fig:bpmn}) & Events \\
 \end{tabular}
 \end{table}
 
-Two catalogs of the database intervene in the rules of Table~\ref{tab:actividades}: the anesthesia types and the postoperative destinations. Table~\ref{tab:catalogos} lists their codes and shows how the destination codes are grouped into the four \code{DESTINO\_*} activities. The ward and the recovery room are merged because the recovery room is a transit before the ward; the ICU and the post-anesthesia care unit are kept as destinations of their own; and the remaining destinations (home, day surgery unit, emergency care and others), which are rare, are grouped together.
+Two catalogs of the database intervene in the rules of Table~\ref{tab:actividades}: the anesthesia types and the postoperative destinations. Table~\ref{tab:catalogos} lists the codes of both catalogs, one block per catalog, and shows how each code is used: the anesthesia code becomes an attribute of the surgery, and the destination codes are grouped into the four \code{DESTINO\_*} activities. The ward and the recovery room are merged because the recovery room is a transit before the ward; the ICU and the post-anesthesia care unit are kept as destinations of their own; and the remaining destinations (home, day surgery unit, emergency care and others), which are rare, are grouped together.
 
 \begin{table}[htbp]
 \centering
-\caption{Catalog codes used in the construction of the event log and grouping of the destination codes.}
+\caption{Catalog codes used in the construction of the event log. The anesthesia codes feed a surgery attribute; the destination codes are grouped into the four \code{DESTINO\_*} activities.}
 \label{tab:catalogos}
 \small
-\begin{tabular}{L{6.4cm}L{6.8cm}}
+\begin{tabular}{rL{6.0cm}L{5.2cm}}
 \toprule
-\code{tipo\_anestesia\_pk} (anesthesia) & \code{destinos\_postoperatorio\_quirofano} (destination) $\rightarrow$ activity \\
+Code & Value & Use in the event log \\
 \midrule
-1 Local & 1 PLANTA (ward) $\rightarrow$ \code{DESTINO\_PLANTA} \\
-2 General & 2 DESPERTAR (recovery room) $\rightarrow$ \code{DESTINO\_PLANTA} \\
-4 [Sin anestesia] (no anesthesia) & 7 UCI (ICU) $\rightarrow$ \code{DESTINO\_UCI} \\
-5 Regional & 9 REANIMACI\'ON (post-anesthesia care unit) $\rightarrow$ \code{DESTINO\_REANIMACION} \\
-6 [Sin datos] (no data) & 3 DOMICILIO (home) $\rightarrow$ \code{DESTINO\_OTROS} \\
-7 Gral-UCI (general, ICU destination) & 4 UCSI (day surgery unit) $\rightarrow$ \code{DESTINO\_OTROS} \\
-8 Gral-REA (general, post-anesthesia care unit) & 5 OTROS (others) $\rightarrow$ \code{DESTINO\_OTROS} \\
-9 Sedaci\'on (sedation) & 8 URGENCIAS (emergency care) $\rightarrow$ \code{DESTINO\_OTROS} \\
+\multicolumn{3}{l}{Catalog \code{tipo\_anestesia\_pk} (anesthesia type)} \\
+1 & Local & Surgery attribute (anesthesia) \\
+2 & General & Surgery attribute (anesthesia) \\
+4 & [Sin anestesia] (no anesthesia) & Surgery attribute (anesthesia) \\
+5 & Regional & Surgery attribute (anesthesia) \\
+6 & [Sin datos] (no data) & Surgery attribute (anesthesia) \\
+7 & Gral-UCI (general, ICU destination) & Surgery attribute (anesthesia) \\
+8 & Gral-REA (general, post-anesthesia care unit) & Surgery attribute (anesthesia) \\
+9 & Sedaci\'on (sedation) & Surgery attribute (anesthesia) \\
+\midrule
+\multicolumn{3}{l}{Catalog \code{destinos\_postoperatorio\_quirofano} (postoperative destination)} \\
+1 & PLANTA (ward) & Activity \code{DESTINO\_PLANTA} \\
+2 & DESPERTAR (recovery room) & Activity \code{DESTINO\_PLANTA} \\
+7 & UCI (ICU) & Activity \code{DESTINO\_UCI} \\
+9 & REANIMACI\'ON (post-anesthesia care unit) & Activity \code{DESTINO\_REANIMACION} \\
+3 & DOMICILIO (home) & Activity \code{DESTINO\_OTROS} \\
+4 & UCSI (day surgery unit) & Activity \code{DESTINO\_OTROS} \\
+5 & OTROS (others) & Activity \code{DESTINO\_OTROS} \\
+8 & URGENCIAS (emergency care) & Activity \code{DESTINO\_OTROS} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -257,7 +268,7 @@ Table~\ref{tab:resumen_log} summarizes the event log obtained. The dominant vari
 \caption{Summary of the event log (version 3).}
 \label{tab:resumen_log}
 \small
-\begin{tabular}{L{6.2cm}r}
+\begin{tabular}{L{8cm}r}
 \toprule
 Measure & Value \\
 \midrule
